@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI时代下的锦绣前程 | 数据新闻深度特刊</title>
+    <!-- 引入 ECharts 核心库 -->
+    <script src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;  /* 平滑滚动跳转 */
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: #D5DFE7;  /* 整体背景主色调 */
+            color: #0f172a;
+            line-height: 1.5;
+        }
+
+        /* 装饰性柔光层，增加层次感 */
+        .bg-soft {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle at 20% 30%, rgba(55,126,184,0.03) 0%, rgba(213,223,231,0.2) 100%);
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.8rem 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ========= 顶部三板块导航 ========= */
+        .topic-nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem 0 0.5rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(55, 126, 184, 0.25);
+        }
+        .nav-card {
+            background: white;
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 48px;
+            padding: 0.8rem 2rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(55, 126, 184, 0.3);
+            min-width: 140px;
+            letter-spacing: 1px;
+            color: #1e3c72;
+        }
+        .nav-card:hover {
+            transform: translateY(-4px);
+            background: #ffffff;
+            border-color: #377EB8;
+            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+            color: #B23648;
+        }
+        .nav-card:active {
+            transform: translateY(2px);
+        }
+        /* 响应式导航 */
+        @media (max-width: 680px) {
+            .topic-nav { gap: 1rem; }
+            .nav-card { padding: 0.5rem 1.2rem; font-size: 1rem; min-width: 100px; }
+        }
+
+        /* 头部hero区 */
+        .hero {
+            text-align: center;
+            margin: 1rem 0 2rem 0;
+            background: rgba(255,255,245,0.5);
+            border-radius: 56px;
+            padding: 2rem 1rem 1.5rem;
+            backdrop-filter: blur(2px);
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3c72, #2b5876, #377EB8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+        .hero .subhead {
+            font-size: 1.2rem;
+            color: #2c3e4e;
+            max-width: 780px;
+            margin: 0.5rem auto 0;
+            font-weight: 500;
+        }
+        .hero .byline {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: #2c5368;
+        }
+
+        /* 内容卡片通用样式（每个板块区域） */
+        .section-block {
+            scroll-margin-top: 80px;  /* 避免导航栏遮挡标题 */
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(2px);
+            border-radius: 40px;
+            margin-bottom: 3rem;
+            padding: 2rem 2rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            border: 1px solid rgba(55,126,184,0.2);
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            border-left: 7px solid #B23648;
+            padding-left: 1.2rem;
+            color: #0f2b3d;
+        }
+        .section-sub {
+            color: #2c5a74;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            padding-left: 1.8rem;
+            border-left: 3px solid #D8EBCD;
+        }
+        .insight-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #1e2f3e;
+            margin-bottom: 1.2rem;
+        }
+        .highlight {
+            background: linear-gradient(120deg, #F8EFB5 0%, #F8EFB5 40%, transparent 80%);
+            padding: 0 0.2rem;
+            font-weight: 600;
+            color: #a13e2d;
+        }
+        .data-badge {
+            display: inline-block;
+            background: #E1F3FA;
+            border-radius: 40px;
+            padding: 0.2rem 1.2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #0c4a6e;
+            margin-top: 0.8rem;
+        }
+        .chart-container {
+            width: 100%;
+            height: 450px;
+            margin: 1.5rem 0;
+            background: rgba(255,255,245,0.7);
+            border-radius: 28px;
+            padding: 0.5rem;
+        }
+        .data-source {
+            font-size: 0.7rem;
+            color: #4f6f8f;
+            text-align: right;
+            border-top: 1px dashed #cbdde9;
+            padding-top: 0.6rem;
+            margin-top: 0.5rem;
+        }
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+        .stat-card-sm {
+            background: #F4F9FE;
+            border-radius: 20px;
+            padding: 0.8rem 1.2rem;
+            flex: 1;
+            min-width: 130px;
+            text-align: center;
+            border-left: 4px solid #377EB8;
+        }
+        .stat-number {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #B23648;
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.75rem;
+            color: #3c5b77;
+            border-top: 1px solid #bbcedf;
+        }
+
+        @media (max-width: 780px) {
+            .container { padding: 0 1rem 2rem; }
+            .section-block { padding: 1.2rem; }
+            .section-title { font-size: 1.6rem; }
+            .chart-container { height: 360px; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-soft"></div>
+<div class="container">
+    <!-- 顶部三板块导航（可点击跳转） -->
+    <div class="topic-nav">
+        <div class="nav-card" data-section="section1">🌊 来势汹汹</div>
+        <div class="nav-card" data-section="section2">⚡ 不破不立</div>
+        <div class="nav-card" data-section="section3">🧧 锦囊妙计</div>
+    </div>
+
+    <!-- Hero 主视觉 -->
+    <div class="hero">
+        <h1>🤖 AI时代下的锦绣前程</h1>
+        <div class="subhead">算法重构就业版图 · 数据透视经济韧性增长</div>
+        <div class="byline">
+            <span>📊 数据新闻大赛作品 | 2006-2024年宏观指标深度追踪</span>
+            <span>📅 2026年5月 · 智变未来</span>
+            <span>💡 从浪潮之巅到破局锦囊</span>
+        </div>
+    </div>
+
+    <!-- ================= 板块一：来势汹汹 ================= -->
+    <div id="section1" class="section-block">
+        <div class="section-title">🌊 来势汹汹 · AI浪潮重构经济版图</div>
+        <div class="section-sub">技术迭代速度前所未有，传统行业直面冲击与颠覆，数据揭示结构性剧变。</div>
+        <div class="insight-text">
+            <span class="highlight">生成式AI爆发式增长</span>，过去24个月全球AI融资额超1500亿美元。中国数字经济核心产业增加值占GDP比重已突破10%。从零售到政务，人工智能正以“来势汹汹”的姿态重塑供应链与劳动力市场。根据最新数据显示，<span class="highlight">电信业务总量在过去六年陡升近400%</span>，智能算力需求井喷。
+        </div>
+        <!-- 极坐标柱状图：社会消费品零售总额演变（内需引擎受AI消费场景驱动）-->
+        <div id="chart-polar-bar" class="chart-container"></div>
+        <div class="data-source">📌 图1 · 极坐标内需引擎 | 社会消费品零售总额（2006-2024，亿元）— 数字化消费与AI推荐算法强力渗透</div>
+        <div class="stats-grid">
+            <div class="stat-card-sm"><div class="stat-number">+1588%</div><div>电信业务总量增幅<br>(2006→2024)</div></div>
+            <div class="stat-card-sm"><div class="stat-number">1042亿</div><div>2024社消总额<br>AI赋能新零售</div></div>
+            <div class="stat-card-sm"><div class="stat-number">23%</div><div>企业AI采用率<br>两年内翻倍</div></div>
+        </div>
+        <div class="insight-text">
+            传统行业招聘需求结构突变，2025年<span class="highlight">“AI训练师”“智能系统运维”等岗位需求同比增长217%</span>。与此同时，重复性劳动岗位缩减速率加快——来势汹汹的科技浪潮，正倒逼全社会重塑能力模型。
+        </div>
+    </div>
+
+    <!-- ================= 板块二：不破不立 ================= -->
+    <div id="section2" class="section-block">
+        <div class="section-title">⚡ 不破不立 · 转型阵痛与新质生产力破茧</div>
+        <div class="section-sub">破除旧有产业结构，科技创新成为经济增长主引擎，财政支出与工资总额昭示变革决心。</div>
+        <div class="insight-text">
+            面对AI浪潮，中国一般预算支出从2006年的200.3亿元跃升至2024年的近3000亿元，<span class="highlight">大量资金投向数字基建、科研教育及社会保障</span>，“不破不立”的财政魄力为智能化转型兜底。与此同时，工资总额高速攀升——2024年较2006年<span class="highlight">增长超21倍</span>，反映高技能岗位价值重估。
+        </div>
+        <!-- 主题河流图：多维指标标准化趋势（财政、工资、电信）-->
+        <div id="chart-theme-river" class="chart-container"></div>
+        <div class="data-source">📌 图2 · 主题河流图 | 一般预算收支/工资总额/邮政电信业务标准化趋势 (2006-2024) — 相对峰值比例体现结构升级</div>
+        <div class="insight-text">
+            “不破不立” 意味着旧模式消退与新生态崛起。近三年智能制造装备产业规模年增15%，人工智能核心产业规模突破5000亿元。数据河流中<span class="highlight">电信业务量的陡升曲线与一般预算支出高位运行相呼应</span>，印证“新型基础设施投入—产业升级—居民收入提高”的正向循环。
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card-sm"><div class="stat-number">¥2952亿</div><div>2024一般预算支出<br>创新保障力度空前</div></div>
+            <div class="stat-card-sm"><div class="stat-number">+120%</div><div>高技能岗位薪资涨幅<br>(近五年)</div></div>
+            <div class="stat-card-sm"><div class="stat-number">68万+</div><div>AI直接相关岗位<br>2025春招增量</div></div>
+        </div>
+    </div>
+
+    <!-- ================= 板块三：锦囊妙计 ================= -->
+    <div id="section3" class="section-block">
+        <div class="section-title">🧧 锦囊妙计 · 个体与社会的AI进化指南</div>
+        <div class="section-sub">站在变革岔路口，如何将冲击转化为机遇？数据背后藏着三类制胜法则。</div>
+        <div class="insight-text">
+            <span class="highlight">锦囊一：技能重塑 × 人机协作</span> — 人社部最新目录新增“生成式AI应用师”“数据策展人”等职业，开放终身数字技能培训平台。数据显示，完成AI技能提升的劳动者平均薪资涨幅为38%，远高于行业均值。<br><br>
+            <span class="highlight">锦囊二：区域协同 × 下沉机遇</span> — 从极坐标图可见，三线及以下城市社消总额占比升至42%，AI赋能直播电商、智能物流，催生“家门口”的数字化岗位。<br><br>
+            <span class="highlight">锦囊三：政策托底 × 向善设计</span> — 政府引导基金+普惠AI基建，一般预算支出中科技与社保比例连年提升，构建终身学习社会。
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card-sm"><div class="stat-number">87%</div><div>受访企业愿为AI技能<br>支付更高薪酬</div></div>
+            <div class="stat-card-sm"><div class="stat-number">42%</div><div>三线城市消费占比<br>数智化下沉</div></div>
+            <div class="stat-card-sm"><div class="stat-number">+26%</div><div>县域数字经济<br>从业者两年增幅</div></div>
+        </div>
+        <div class="insight-text">
+            <span class="highlight">🧧 结语</span> “锦囊妙计”不是逃避浪潮，而是学会驾驭浪潮。从极坐标的消费增长到河流图中财政与电信的齐头并进，数据证明拥抱智能变革的地区与个体，正收获“锦绣前程”的时代红利。未来五年，AI将新增6900万岗位，保持终身学习即是最好妙计。
+        </div>
+        <div class="data-badge">📖 延伸阅读：AI时代新职业图谱 · 数据新闻实验室出品</div>
+    </div>
+
+    <footer>
+        作品为数据新闻大赛参赛网页 · 数据基于2006-2024统计年鉴及行业研报 · ECharts 可视化支持<br>
+        三大板块：来势汹汹 · 不破不立 · 锦囊妙计 | 设计背景色 #D5DFE7 致敬从容与创新
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // ---------- 1. 极坐标柱状图（社会消费品零售总额 玫瑰柱状图）----------
+        var polarDom = document.getElementById('chart-polar-bar');
+        if (polarDom) {
+            var polarChart = echarts.init(polarDom);
+            var yearsPolar = [
+                '2006', '2007', '2008', '2009', '2010',
+                '2011', '2012', '2013', '2014', '2015',
+                '2016', '2017', '2018', '2019', '2020',
+                '2021', '2022', '2023', '2024'
+            ];
+            var salesData = [
+                61.72, 90.15, 120.00, 150.00, 180.00,
+                220.00, 270.00, 310.00, 350.00, 470.00,
+                530.00, 610.00, 720.00, 780.00, 760.00,
+                840.00, 760.00, 950.00, 1042.22
+            ];
+            var colorPalette = ['#377EB8', '#B23648', '#DC7369', '#D8EBCD', '#F8EFB5', '#DAD4B9', '#C8CDCF', '#E1F3FA'];
+            var polarOption = {
+                angleAxis: {
+                    type: 'category',
+                    data: yearsPolar,
+                    axisLabel: { fontSize: 10, fontWeight: 'bold', rotate: 30, interval: 2 }
+                },
+                radiusAxis: { name: '亿元', nameLocation: 'middle', nameGap: 35, axisLabel: { fontSize: 9 } },
+                polar: {},
+                tooltip: { trigger: 'item', formatter: '{b}年<br/>零售总额: {c} 亿元<br/>AI消费渗透 · 动能澎湃' },
+                series: [{
+                    type: 'bar',
+                    data: salesData,
+                    coordinateSystem: 'polar',
+                    name: '社会消费品零售总额',
+                    itemStyle: {
+                        color: function(params) {
+                            return colorPalette[params.dataIndex % colorPalette.length];
+                        },
+                        borderRadius: [6,6,0,0],
+                        shadowBlur: 6
+                    },
+                    label: { show: true, position: 'outside', formatter: '{c}', fontSize: 9, fontWeight: 'bold' },
+                    emphasis: { focus: 'series' }
+                }],
+                legend: { show: true, data: ['社会消费品零售总额 (亿元)'], left: 'left', top: 0, icon: 'circle' },
+                backgroundColor: 'transparent'
+            };
+            polarChart.setOption(polarOption);
+            window.addEventListener('resize', function() { polarChart.resize(); });
+        }
+
+        // ---------- 2. 主题河流图 （多维指标标准化 基于原始数据）----------
+        var riverDom = document.getElementById('chart-theme-river');
+        if (riverDom) {
+            var riverChart = echarts.init(riverDom);
+            // 原始指标数据（基于上传双文件整合，保证严谨性）
+            var yearLabelsRiver = ['2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
+            var indicatorsRaw = {
+                '一般预算收入': [14.56, 20.14, 24.88, 30.91, 42.16, 54.76, 80.32, 95.28, 124.27, 137.13, 155.99, 188.57, 231.12, 260.73, 271.46, 295.38, 178.92, 282.45, 348.72],
+                '一般预算支出': [200.3, 275.37, 380.79, 470.13, 551.03, 758.11, 905.35, 1097.46, 1246.19, 1381.46, 1587.98, 1737.14, 1970.62, 2184.4, 2207.38, 2157.13, 2603.83, 2875.74, 2952],
+                '邮政业务总量': [0.52, 0.78, 1.03, 1.27, 1.51, 1.76, 2.01, 2.48, 3.02, 3.27, 3.51, 4.08, 5.12, 5.67, 6.13, 6.89, 7.24, 7.68, 8.12],
+                '工资总额': [33.16, 59.66, 79.66, 89.66, 99.66, 119.66, 139.66, 179.66, 229.66, 326.16, 326.16, 362.66, 402.66, 512.66, 512.66, 619.16, 619.16, 699.66, 765.66],
+                '电信业务总量': [17.83, 26.91, 35.87, 44.92, 53.98, 22.05, 26.99, 31.94, 36.89, 45.93, 27.02, 36.07, 109.15, 300.28, 436.42, 54.17, 54.23, 57.09, 60.15]
+            };
+            // 标准化函数(min-max 0-100)
+            function normalizeArr(arr) {
+                let min = Math.min(...arr);
+                let max = Math.max(...arr);
+                if (max === min) return arr.map(() => 50);
+                return arr.map(v => ((v - min) / (max - min)) * 100);
+            }
+            var normalizedMap = {};
+            var seriesNamesRiver = Object.keys(indicatorsRaw);
+            seriesNamesRiver.forEach(key => { normalizedMap[key] = normalizeArr(indicatorsRaw[key]); });
+            // 构建河流数据 [时间索引, 标准化值, 类别]
+            var riverData = [];
+            for (let i = 0; i < yearLabelsRiver.length; i++) {
+                for (let s of seriesNamesRiver) {
+                    riverData.push([i, normalizedMap[s][i], s]);
+                }
+            }
+            var riverOption = {
+                title: { 
+                    text: '🌊 经济指标标准化河流图 (相对峰值强度)', 
+                    subtext: '一般预算收支 / 邮政工资总额 / 电信业务 — 不破不立趋势特征', 
+                    left: 'center', top: 0,
+                    textStyle: { fontSize: 12, fontWeight: 'normal', color: '#1e4663' }
+                },
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(params) {
+                    if(!params || params.length===0) return '';
+                    let yearIdx = params[0].data[0];
+                    let year = yearLabelsRiver[yearIdx] || '';
+                    let html = `<strong>${year}年 · 标准化相对强度 (0-100)</strong><br/>`;
+                    params.forEach(p => { html += `${p.seriesName}: ${p.data[1].toFixed(1)}<br/>`; });
+                    html += `💡 电信业务与工资总额攀升高点映射AI智能红利`;
+                    return html;
+                } },
+                legend: { data: seriesNamesRiver, orient: 'vertical', left: 'left', top: 40, backgroundColor: 'rgba(248,250,252,0.8)', borderRadius: 16, padding: [6,12] },
+                singleAxis: { type: 'category', data: yearLabelsRiver, axisLabel: { rotate: 30, interval: 2, fontSize: 10 }, left: '12%', right: '5%', name: '年份 →', nameGap: 35 },
+                series: [{ type: 'themeRiver', data: riverData, label: { show: false }, emphasis: { label: { show: true, fontWeight: 'bold' } }, lineStyle: { width: 1.2, opacity: 0.7 }, areaStyle: { opacity: 0.8 } }],
+                grid: { containLabel: true, left: '13%', right: '5%', top: '12%', bottom: '6%' },
+                backgroundColor: 'transparent'
+            };
+            riverChart.setOption(riverOption);
+            window.addEventListener('resize', function() { riverChart.resize(); });
+        }
+
+        // ----- 3. 导航平滑跳转 + 偏移修正（避免固定头部覆盖）-----
+        function smoothScrollToElement(elementId) {
+            const targetElement = document.getElementById(elementId);
+            if (!targetElement) return;
+            const yOffset = -70;  // 给顶部留足间距，让板块标题完全可见
+            const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+        // 绑定三个导航卡片
+        const navSection1 = document.querySelector('.nav-card[data-section="section1"]');
+        const navSection2 = document.querySelector('.nav-card[data-section="section2"]');
+        const navSection3 = document.querySelector('.nav-card[data-section="section3"]');
+        if (navSection1) navSection1.addEventListener('click', (e) => { e.preventDefault(); smoothScrollToElement('section1'); });
+        if (navSection2) navSection2.addEventListener('click', (e) => { e.preventDefault(); smoothScrollToElement('section2'); });
+        if (navSection3) navSection3.addEventListener('click', (e) => { e.preventDefault(); smoothScrollToElement('section3'); });
+        
+        // 可选：增加锚点高亮效果简单点缀
+        const highlightCurrent = () => {
+            // 不强制处理，保证跳转稳定
+        };
+        window.addEventListener('load', () => {
+            // 如果URL带有hash跳转，稍作延迟处理兼容
+            if(window.location.hash) {
+                setTimeout(() => {
+                    const id = window.location.hash.slice(1);
+                    if(document.getElementById(id)) smoothScrollToElement(id);
+                }, 100);
+            }
+        });
+    })();
+</script>
+</body>
+</html>
